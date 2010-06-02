@@ -1,30 +1,14 @@
-import processing.core.*; 
-import processing.xml.*; 
-
-import java.applet.*; 
-import java.awt.*; 
-import java.awt.image.*; 
-import java.awt.event.*; 
-import java.io.*; 
-import java.net.*; 
-import java.text.*; 
-import java.util.*; 
-import java.util.zip.*; 
-import java.util.regex.*; 
-
-public class cuantificacion extends PApplet {
-
 /********************************************************
 *                                                       *
 *  15/02/2010                                           *
-*  T\u00c9CNICAS GRAFICAS - Ejercicio 2: Cuantificacion      *
+*  TÉCNICAS GRAFICAS - Ejercicio 2: Cuantificacion      *
 *                                                       *
 *  Alejandro Riera Mainar                               *
-*  N\u00baMat: 010381                                        *
+*  NºMat: 010381                                        *
 *  ariera@gmail.com                                     *
 *                                                       *
 ********************************************************/
-float I0 = 0.02f;
+float I0 = 0.02;
 String FICHERO_IMAGEN = "gradiente.jpg"; // gradiente.jpg  -  lena.jpg  -  leonbn.jpg
 
 
@@ -37,10 +21,10 @@ PImage output;
 boolean LOGARITMICO=true;
 boolean LINEAL=false;
 //el primer indice referencia la potencia de 2 de los niveles de gris
-//as\u00ed paleta[3] devolver\u00e1 la paleta para 16 niveles de gris [ 2^(3+1) = 16 ]
+//así paleta[3] devolverá la paleta para 16 niveles de gris [ 2^(3+1) = 16 ]
 int[][] paletaLineal, paletaLogaritmica;
 
-public void setup() {
+void setup() {
   img = loadImage(FICHERO_IMAGEN);
   size(2*img.width,img.height + 100);
   image(img,0,0);
@@ -55,7 +39,7 @@ public void setup() {
 
 
 
-public void draw() {
+void draw() {
   img.loadPixels();
   output.loadPixels();
   cuantificar(img, output);
@@ -68,7 +52,7 @@ public void draw() {
 
 }
 
-public void cuantificar(PImage src, PImage dest){
+void cuantificar(PImage src, PImage dest){
   int loc=0;
   for (int y = 0; y < src.height; y++) {   
     for (int x = 0; x < src.width; x++) {
@@ -79,7 +63,7 @@ public void cuantificar(PImage src, PImage dest){
 }
 
 
-public int calcularColor(int pixel){
+color calcularColor(color pixel){
   int[][] paleta;
   int intensidad = (int)brightness(pixel);
   if (intervalosLogaritmicos)
@@ -95,7 +79,7 @@ public int calcularColor(int pixel){
 
 
 /************** INICIALIZACION DE LAS PALETAS ***********************/
-public void inicializarPaletas(){
+void inicializarPaletas(){
   paletaLineal = new int[8][];
   for(int i=0; i< paletaLineal.length; i++)
     paletaLineal[i]= calcularPaleta((int)pow(2,i+1), LINEAL);
@@ -105,13 +89,13 @@ public void inicializarPaletas(){
     paletaLogaritmica[i]= calcularPaleta((int)pow(2,i+1), LOGARITMICO);
 }
 
-public int log2(int x){
+int log2(int x){
   return (int)(Math.log(x)/Math.log(2));
 }
 
 
 /***        calculo de una paleta              **********************/
-public int[] calcularPaleta(int niveles, boolean es_logaritimica){
+int[] calcularPaleta(int niveles, boolean es_logaritimica){
   int j = 0;
   int[] intervalos = es_logaritimica ? calcularIntervalosLogaritmicos(niveles) : calcularIntervalosLineal(niveles);
 
@@ -129,11 +113,11 @@ public int[] calcularPaleta(int niveles, boolean es_logaritimica){
 }
 
 
-public int[] calcularIntervalosLogaritmicos(int niveles){
+int[] calcularIntervalosLogaritmicos(int niveles){
   int[] intervalos = new int[niveles];
   float[] intervalosNormalizados = new float[niveles];
   float k = 1 / I0;
-  k = pow(k,1.0f/(float)niveles);
+  k = pow(k,1.0/(float)niveles);
 
   intervalosNormalizados[0]= I0;
   intervalos[0]= 0;
@@ -147,7 +131,7 @@ public int[] calcularIntervalosLogaritmicos(int niveles){
 
 
 
-public int[] calcularIntervalosLineal(int niveles){
+int[] calcularIntervalosLineal(int niveles){
   int inc = MAX / niveles;
   int[] intervalos = new int[niveles];
   intervalos[0]=0;
@@ -158,7 +142,7 @@ public int[] calcularIntervalosLineal(int niveles){
 } 
 
 
-public int[] calcularColorIntervalos(int[] intervalos){
+int[] calcularColorIntervalos(int[] intervalos){
   int niveles = intervalos.length;
   int[] colorIntervalos = new int[niveles];
   for (int i = 0; i < niveles-1; i++) {   
@@ -172,13 +156,13 @@ public int[] calcularColorIntervalos(int[] intervalos){
 
 
 /************** EVENTOS ********************/
-public void mousePressed(){
+void mousePressed(){
   niveles = niveles / 2;
   if (niveles == 1)
     niveles = MAX;
 }
 
-public void keyPressed(){
+void keyPressed(){
   if (key == '+')
     niveles = niveles == MAX ? 2 : niveles*2;
   else if (key == '-')
@@ -200,8 +184,3 @@ public void keyPressed(){
 
 
 
-
-  static public void main(String args[]) {
-    PApplet.main(new String[] { "--bgcolor=#FFFFFF", "cuantificacion" });
-  }
-}
